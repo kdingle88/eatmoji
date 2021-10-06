@@ -1,6 +1,7 @@
 package com.kmd.eatmoji.models;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -38,6 +39,18 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @OneToMany(mappedBy = "user")
+    private Set<Eatmoji> myEatMojis;
+
+    @OneToMany(mappedBy = "admin")
+    private List<EmojiRating> myEmojiRatings;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinTable(name = "bookmarks", joinColumns = {
+            @JoinColumn(name = "user_id", referencedColumnName = "id") }, inverseJoinColumns = {
+            @JoinColumn(name = "eatMoji_id", referencedColumnName = "id") })
+    private Set<Eatmoji> bookmarks;
+
     public User() {
     }
 
@@ -45,6 +58,17 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    public User(Long id, String username, String email, String password, Set<Role> roles, Set<Eatmoji> myEatMojis, List<EmojiRating> myEmojiRatings, Set<Eatmoji> bookmarks) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
+        this.myEatMojis = myEatMojis;
+        this.myEmojiRatings = myEmojiRatings;
+        this.bookmarks = bookmarks;
     }
 
     public Long getId() {
@@ -85,5 +109,29 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public Set<Eatmoji> getMyEatMojis() {
+        return myEatMojis;
+    }
+
+    public void setMyEatMojis(Set<Eatmoji> myEatMojis) {
+        this.myEatMojis = myEatMojis;
+    }
+
+    public List<EmojiRating> getMyEmojiRatings() {
+        return myEmojiRatings;
+    }
+
+    public void setMyEmojiRatings(List<EmojiRating> myEmojiRatings) {
+        this.myEmojiRatings = myEmojiRatings;
+    }
+
+    public Set<Eatmoji> getBookmarks() {
+        return bookmarks;
+    }
+
+    public void setBookmarks(Set<Eatmoji> bookmarks) {
+        this.bookmarks = bookmarks;
     }
 }
