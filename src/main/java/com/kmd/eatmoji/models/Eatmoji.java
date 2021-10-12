@@ -1,20 +1,27 @@
 package com.kmd.eatmoji.models;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.google.common.base.Objects;
+
+import java.util.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "eatMojis")
+@Table(name = "eatmojis")
 public class Eatmoji {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
+
+    @NotBlank
+    @Column(name = "name", nullable = false)
+    private String name;
+
 
     @NotBlank
     @Column(name = "image_url", nullable = false)
@@ -28,12 +35,20 @@ public class Eatmoji {
     @Column(name = "modified_on")
     private Date modifiedOn;
 
+    @JsonManagedReference
     @ManyToOne()
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToMany(mappedBy = "bookmarks", fetch = FetchType.LAZY)
-    private List<User> bookmarkedUsers;
+    @ManyToMany(mappedBy = "bookmarks", fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("bookmarks")
+    private Set<User> bookmarkedUsers = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinTable(name = "eatmoji_dishes", joinColumns = {
+            @JoinColumn(name = "eatmoji_id", referencedColumnName = "id") }, inverseJoinColumns = {
+            @JoinColumn(name = "dish_id", referencedColumnName = "id") })
+    private List<Dish> dishes = new ArrayList<>();
 
 
 
@@ -42,14 +57,14 @@ public class Eatmoji {
 
     }
 
-    public Eatmoji(Long id, String imageUrl, Date createdOn, Date modifiedOn, User user, List<User> bookmarkedUsers) {
-        super();
+    public Eatmoji(Long id, String imageUrl, Date createdOn, Date modifiedOn, User user, Set<User> bookmarkedUsers, List<Dish> dishes) {
         this.id = id;
         this.imageUrl = imageUrl;
         this.createdOn = createdOn;
         this.modifiedOn = modifiedOn;
         this.user = user;
         this.bookmarkedUsers = bookmarkedUsers;
+        this.dishes = dishes;
     }
 
     public Long getId() {
@@ -68,14 +83,6 @@ public class Eatmoji {
         this.imageUrl = imageUrl;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public Date getCreatedOn() {
         return createdOn;
     }
@@ -92,37 +99,53 @@ public class Eatmoji {
         this.modifiedOn = modifiedOn;
     }
 
-    public List<User> getBookmarkedUsers() {
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Set<User> getBookmarkedUsers() {
         return bookmarkedUsers;
     }
 
-    public void setBookmarkedUsers(List<User> bookmarkedUsers) {
+    public void setBookmarkedUsers(Set<User> bookmarkedUsers) {
         this.bookmarkedUsers = bookmarkedUsers;
+    }
+
+    public List<Dish> getDishes() {
+        return dishes;
+    }
+
+    public void setDishes(List<Dish> dishes) {
+        this.dishes = dishes;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Eatmoji eatmoji = (Eatmoji) o;
+        return Objects.equal(id, eatmoji.id) && Objects.equal(imageUrl, eatmoji.imageUrl) && Objects.equal(createdOn, eatmoji.createdOn) && Objects.equal(modifiedOn, eatmoji.modifiedOn) && Objects.equal(user, eatmoji.user) && Objects.equal(bookmarkedUsers, eatmoji.bookmarkedUsers) && Objects.equal(dishes, eatmoji.dishes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Eatmoji other = (Eatmoji) obj;
-        return Objects.equals(id, other.id);
+        return Objects.hashCode(id, imageUrl, createdOn, modifiedOn, user, bookmarkedUsers, dishes);
     }
 
     @Override
     public String toString() {
-        return "EatMoji [id=" + id + ", imageUrl=" + imageUrl + ", createdOn=" + createdOn + ", modifiedOn="
-                + modifiedOn + ", user=" + user + ", bookmarkedUsers=" + bookmarkedUsers + "]";
+        return "Eatmoji{" +
+                "id=" + id +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", createdOn=" + createdOn +
+                ", modifiedOn=" + modifiedOn +
+                ", user=" + user +
+                ", bookmarkedUsers=" + bookmarkedUsers +
+                ", dishes=" + dishes +
+                '}';
     }
-
-
-
 }
