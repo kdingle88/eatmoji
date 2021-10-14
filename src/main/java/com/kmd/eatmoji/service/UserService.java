@@ -3,8 +3,10 @@ package com.kmd.eatmoji.service;
 import com.kmd.eatmoji.models.Eatmoji;
 import com.kmd.eatmoji.models.User;
 import com.kmd.eatmoji.repository.UserRepository;
+import javassist.NotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,25 +29,19 @@ public class UserService {
     }
 
 
-    public ResponseEntity<List<User>> getAllUsers(String username) {
+    public List<User> getUsers(String username) {
 
-        try {
-            List<User> users = new ArrayList<User>();
+        List<User> users = new ArrayList<User>();
 
-            if (username == null) {
-                userRepository.findAll().forEach(users::add);
+        if (username == null) {
+            userRepository.findAll().forEach(users::add);
 
-            } else {
-                userRepository.findByUsernameContaining(username).forEach(users::add);
-            }
-            if (users.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-
-            return new ResponseEntity<>(users, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {
+            userRepository.findByUsernameContaining(username).forEach(users::add);
         }
+
+        return users;
+
     }
 
 
@@ -129,5 +125,12 @@ public class UserService {
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public User getUserById(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalStateException("User Not Found with userId: " + userId));
+
+        return user;
+
     }
 }

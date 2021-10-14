@@ -1,5 +1,7 @@
 package com.kmd.eatmoji.controllers;
 
+import com.kmd.eatmoji.dto.EatmojiDTO;
+import com.kmd.eatmoji.models.Eatmoji;
 import com.kmd.eatmoji.models.User;
 import com.kmd.eatmoji.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,28 @@ public class TestController {
     }
 
     @GetMapping("/all")
-    public String allAccess() {
-        return "Public Feed.";
+    public EatmojiDTO allAccess() {
+
+        Eatmoji eatmoji = new Eatmoji();
+        User user = new User();
+
+        user.setId(1L);
+        user.setUsername("Blah");
+        user.setEmail("blah@blah.com");
+        user.setPassword("2342343");
+
+        eatmoji.setId(123L);
+        eatmoji.setName("TestEmoji1");
+        eatmoji.setImageUrl("testimg1.com");
+        eatmoji.setUser(user);
+
+
+
+        EatmojiDTO eatmojiDTO = new EatmojiDTO(eatmoji);
+
+        return eatmojiDTO;
+
+//        return "Public Feed.";
     }
 
     @GetMapping("/user")
@@ -37,7 +59,7 @@ public class TestController {
     @GetMapping("/maker")
     @PreAuthorize("hasRole('MAKER')")
     public String restaurantAccess() {
-        return "MAKER menu where makers can CRUD their that will be available in Eatmoji description section.";
+        return "MAKER menu.";
     }
 
     @GetMapping("/admin")

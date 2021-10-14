@@ -29,11 +29,11 @@ public class Eatmoji {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_on")
-    private Date createdOn;
+    private Date createdOn = new Date();
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "modified_on")
-    private Date modifiedOn;
+    private Date modifiedOn = new Date();
 
     @JsonManagedReference
     @ManyToOne()
@@ -81,6 +81,14 @@ public class Eatmoji {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Date getCreatedOn() {
@@ -140,6 +148,7 @@ public class Eatmoji {
     public String toString() {
         return "Eatmoji{" +
                 "id=" + id +
+                ", name='" + name + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", createdOn=" + createdOn +
                 ", modifiedOn=" + modifiedOn +

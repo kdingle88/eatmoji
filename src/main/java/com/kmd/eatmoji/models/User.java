@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.base.Objects;
+import lombok.Data;
 
 import java.util.*;
 
@@ -18,6 +19,7 @@ import javax.validation.constraints.Size;
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email")
         })
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,11 +84,11 @@ public class User {
             @JoinColumn(name = "followed_id", referencedColumnName = "id") }, inverseJoinColumns = {
             @JoinColumn(name = "follower_id", referencedColumnName = "id") })
         @JsonIgnoreProperties("following")
-    private Set<User> followers;
+    private Set<User> followers = new HashSet<>();
 
     @ManyToMany(mappedBy = "followers", fetch = FetchType.EAGER)
     @JsonIgnoreProperties("followers")
-    private Set<User> following;
+    private Set<User> following = new HashSet<>();
 
 
 
