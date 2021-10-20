@@ -10,6 +10,8 @@ public interface EatmojiService {
 
     EatmojiDTO findById(Long id);
 
+    List<EatmojiDTO> getUserEatmojis(String username);
+
     List<EatmojiDTO> findAll();
 
     EatmojiDTO convertAndSave(EatmojiDTO eatmojiDTO);

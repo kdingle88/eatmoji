@@ -1,7 +1,7 @@
 package com.kmd.eatmoji.controllers;
 
+import com.kmd.eatmoji.dto.DishDTO;
 import com.kmd.eatmoji.models.Dish;
-import com.kmd.eatmoji.models.User;
 import com.kmd.eatmoji.service.DishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 public class DishController {
 
-
     private final DishService dishService;
 
     @Autowired
@@ -22,10 +21,17 @@ public class DishController {
         this.dishService = dishService;
     }
 
-    @GetMapping()
-    public ResponseEntity<List<Dish>> getAllDishes(@RequestParam(required = false) String city) {
+    @PostMapping()
+    public DishDTO createDish(@RequestBody DishDTO dishDTO) {
 
-        return dishService.getAllDishes(city);
+        return this.dishService.createDish(dishDTO);
+    }
+
+    @GetMapping("{id}")
+    public DishDTO findById(@PathVariable Long id) {
+
+
+        return this.dishService.findById(id);
     }
 
 

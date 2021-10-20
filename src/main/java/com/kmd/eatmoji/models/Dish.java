@@ -19,8 +19,8 @@ public class Dish {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    @NotBlank
-    @Column(name = "image_url", nullable = false)
+
+    @Column(name = "image_url")
     private String imageUrl;
 
     @NotBlank
@@ -28,7 +28,7 @@ public class Dish {
     @Size(max = 50)
     private String name;
 
-    @NotBlank
+
     @Lob
     @Column(name = "description")
     private String description;
@@ -43,11 +43,11 @@ public class Dish {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_on")
-    private Date createdOn;
+    private Date createdOn = new Date();
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "modified_on")
-    private Date modifiedOn;
+    private Date modifiedOn = new Date();
 
     @JsonManagedReference
     @ManyToOne()
@@ -60,15 +60,17 @@ public class Dish {
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(name = "dish_ratings", joinColumns = {
             @JoinColumn(name = "dish_id", referencedColumnName = "id") }, inverseJoinColumns = {
-            @JoinColumn(name = "emojiRating_id", referencedColumnName = "id") })
+            @JoinColumn(name = "emoji_rating_id", referencedColumnName = "id") })
     private List<EmojiRating> ratings;
 
     public Dish() {
     }
 
-    public Dish(Long id, String imageUrl, String city, String zip, Date createdOn, Date modifiedOn, User creator, Set<Eatmoji> eatmojis, List<EmojiRating> ratings) {
+    public Dish(Long id, String imageUrl, String name, String description, String city, String zip, Date createdOn, Date modifiedOn, User creator, Set<Eatmoji> eatmojis, List<EmojiRating> ratings) {
         this.id = id;
         this.imageUrl = imageUrl;
+        this.name = name;
+        this.description = description;
         this.city = city;
         this.zip = zip;
         this.createdOn = createdOn;
@@ -92,6 +94,22 @@ public class Dish {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getCity() {
@@ -155,12 +173,12 @@ public class Dish {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Dish dish = (Dish) o;
-        return Objects.equal(id, dish.id) && Objects.equal(imageUrl, dish.imageUrl) && Objects.equal(city, dish.city) && Objects.equal(zip, dish.zip) && Objects.equal(createdOn, dish.createdOn) && Objects.equal(modifiedOn, dish.modifiedOn) && Objects.equal(creator, dish.creator) && Objects.equal(eatmojis, dish.eatmojis) && Objects.equal(ratings, dish.ratings);
+        return Objects.equal(id, dish.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, imageUrl, city, zip, createdOn, modifiedOn, creator, eatmojis, ratings);
+        return Objects.hashCode(id);
     }
 
     @Override
@@ -168,6 +186,8 @@ public class Dish {
         return "Dish{" +
                 "id=" + id +
                 ", imageUrl='" + imageUrl + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
                 ", city='" + city + '\'' +
                 ", zip='" + zip + '\'' +
                 ", createdOn=" + createdOn +

@@ -12,8 +12,8 @@ public class EatmojiDTO {
     private String imageUrl;
     private Date createdOn;
     private Date modifiedOn;
-    private Long user;
-    private Set<Long> bookmarkedUsers = new HashSet<>();
+    private String user;
+    private Set<String> bookmarkedUsers = new HashSet<>();
     private List<Long> dishes = new ArrayList<>();
 
     public EatmojiDTO(Eatmoji eatmoji) {
@@ -23,15 +23,10 @@ public class EatmojiDTO {
         this.imageUrl = eatmoji.getImageUrl();
         this.createdOn = eatmoji.getCreatedOn();
         this.modifiedOn = eatmoji.getModifiedOn();
-        this.user = eatmoji.getUser().getId();
+        this.user = eatmoji.getUser().getUsername();
+        eatmoji.getBookmarkedUsers().forEach(user -> this.bookmarkedUsers.add(user.getUsername()));
+        eatmoji.getDishes().forEach(dish -> this.dishes.add(dish.getId()));
 
-        Set<Long> bookmarkedUsers = new HashSet<>();
-        eatmoji.getBookmarkedUsers().forEach(user -> bookmarkedUsers.add(user.getId()));
-        this.setBookmarkedUsers(bookmarkedUsers);
-
-        List<Long> dishes = new ArrayList<>();
-        eatmoji.getDishes().forEach(dish -> dishes.add(dish.getId()));
-        this.setDishes(dishes);
     }
 
 
@@ -75,19 +70,19 @@ public class EatmojiDTO {
         this.modifiedOn = modifiedOn;
     }
 
-    public Long getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(Long user) {
+    public void setUser(String user) {
         this.user = user;
     }
 
-    public Set<Long> getBookmarkedUsers() {
+    public Set<String> getBookmarkedUsers() {
         return bookmarkedUsers;
     }
 
-    public void setBookmarkedUsers(Set<Long> bookmarkedUsers) {
+    public void setBookmarkedUsers(Set<String> bookmarkedUsers) {
         this.bookmarkedUsers = bookmarkedUsers;
     }
 

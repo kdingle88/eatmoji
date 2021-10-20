@@ -41,6 +41,15 @@ public class EatmojiServiceImpl implements EatmojiService {
     }
 
     @Override
+    public List<EatmojiDTO> getUserEatmojis(String username) {
+        return this.eatmojiRepository
+                .getAllEatmojisByUsername(username)
+                .stream()
+                .map(eatmoji -> new EatmojiDTO(eatmoji))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public EatmojiDTO convertAndSave(EatmojiDTO eatmojiDTO) {
         return null;
     }

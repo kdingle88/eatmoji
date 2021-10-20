@@ -3,21 +3,26 @@ package com.kmd.eatmoji.dto;
 import com.google.common.base.Objects;
 import com.kmd.eatmoji.models.User;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-public class FollowerDTO {
+public class FollowingDTO {
 
 
     private String username;
     private String name;
     private String city;
+    private List<EatmojiDTO> eatmojis = new ArrayList<>();
 
 
-    public FollowerDTO(User user) {
+    public FollowingDTO(User user) {
         this.username = user.getUsername();
         this.name = user.getName();
         this.city = user.getCity();
+        user.getEatmojis().forEach(eatmoji -> this.eatmojis.add(new EatmojiDTO(eatmoji)));
+
 
     }
 
@@ -45,11 +50,19 @@ public class FollowerDTO {
         this.city = city;
     }
 
+    public List<EatmojiDTO> getEatmojis() {
+        return eatmojis;
+    }
+
+    public void setEatmojis(List<EatmojiDTO> eatmojis) {
+        this.eatmojis = eatmojis;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        FollowerDTO that = (FollowerDTO) o;
+        FollowingDTO that = (FollowingDTO) o;
         return Objects.equal(username, that.username);
     }
 
@@ -60,10 +73,11 @@ public class FollowerDTO {
 
     @Override
     public String toString() {
-        return "FollowerDTO{" +
+        return "FollowingDTO{" +
                 "username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 ", city='" + city + '\'' +
+                ", eatmojis=" + eatmojis +
                 '}';
     }
 }

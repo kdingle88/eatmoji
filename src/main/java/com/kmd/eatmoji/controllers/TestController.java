@@ -3,7 +3,7 @@ package com.kmd.eatmoji.controllers;
 import com.kmd.eatmoji.dto.EatmojiDTO;
 import com.kmd.eatmoji.models.Eatmoji;
 import com.kmd.eatmoji.models.User;
-import com.kmd.eatmoji.service.UserService;
+import com.kmd.eatmoji.service.OldUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/test")
 public class TestController {
 
-    private final UserService userService;
+    private final OldUserService userService;
 
     @Autowired
-    public TestController(UserService userService) {
+    public TestController(OldUserService userService) {
         this.userService = userService;
     }
 

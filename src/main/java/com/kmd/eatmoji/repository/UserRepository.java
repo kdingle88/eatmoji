@@ -1,7 +1,10 @@
 package com.kmd.eatmoji.repository;
 
+import com.kmd.eatmoji.models.Eatmoji;
 import com.kmd.eatmoji.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,4 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsByEmail(String email);
 
     List<User> findByUsernameContaining(String username);
+
+
+//    List<Eatmoji> findEatmojisByUsername(String username);
 }

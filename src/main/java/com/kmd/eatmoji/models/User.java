@@ -4,17 +4,15 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.base.Objects;
-import lombok.Data;
-
-import java.util.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.*;
 
 @Entity
-@Table(	name = "users",
+@Table(name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email")
@@ -29,6 +27,7 @@ public class User {
     @Size(max = 20)
     private String username;
 
+
     @NotBlank
     @Size(max = 50)
     @Email
@@ -39,6 +38,10 @@ public class User {
     @Size(max = 120)
     private String password;
 
+
+    @Size(max = 100)
+    private String name;
+
     @Size(max = 50)
     private String city;
 
@@ -47,14 +50,14 @@ public class User {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_on")
-    private Date createdOn;
+    private Date createdOn = new Date();
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "modified_on")
-    private Date modifiedOn;
+    private Date modifiedOn = new Date();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(	name = "user_roles",
+    @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
@@ -74,22 +77,21 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(name = "bookmarks", joinColumns = {
-            @JoinColumn(name = "user_id", referencedColumnName = "id") }, inverseJoinColumns = {
-            @JoinColumn(name = "eatmoji_id", referencedColumnName = "id") })
+            @JoinColumn(name = "user_id", referencedColumnName = "id")}, inverseJoinColumns = {
+            @JoinColumn(name = "eatmoji_id", referencedColumnName = "id")})
     @JsonIgnoreProperties("bookmarkedUsers")
     private Set<Eatmoji> bookmarks = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(name = "follows", joinColumns = {
-            @JoinColumn(name = "followed_id", referencedColumnName = "id") }, inverseJoinColumns = {
-            @JoinColumn(name = "follower_id", referencedColumnName = "id") })
-        @JsonIgnoreProperties("following")
+            @JoinColumn(name = "followed_id", referencedColumnName = "id")}, inverseJoinColumns = {
+            @JoinColumn(name = "follower_id", referencedColumnName = "id")})
+    @JsonIgnoreProperties("following")
     private Set<User> followers = new HashSet<>();
 
     @ManyToMany(mappedBy = "followers", fetch = FetchType.EAGER)
     @JsonIgnoreProperties("followers")
     private Set<User> following = new HashSet<>();
-
 
 
     public User() {
@@ -101,11 +103,12 @@ public class User {
         this.password = password;
     }
 
-    public User(Long id, String username, String email, String password, String city, String zip, Date createdOn, Date modifiedOn, Set<Role> roles, List<Eatmoji> eatmojis, List<Dish> dishes, List<EmojiRating> emojiRatings, Set<Eatmoji> bookmarks, Set<User> followers, Set<User> following) {
+    public User(Long id, String username, String email, String password, String name, String city, String zip, Date createdOn, Date modifiedOn, Set<Role> roles, List<Eatmoji> eatmojis, List<Dish> dishes, List<EmojiRating> emojiRatings, Set<Eatmoji> bookmarks, Set<User> followers, Set<User> following) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.name = name;
         this.city = city;
         this.zip = zip;
         this.createdOn = createdOn;
@@ -117,6 +120,27 @@ public class User {
         this.bookmarks = bookmarks;
         this.followers = followers;
         this.following = following;
+    }
+
+    public void addFollowing(User user) {
+        following.add(user);
+        user.getFollowers().add(this);
+    }
+
+    public void removeFollowing(User user) {
+        following.remove(user);
+        user.getFollowers().remove(this);
+    }
+
+
+    public void addBookmark(Eatmoji toBookmark) {
+        bookmarks.add(toBookmark);
+        //Then add user to Eatmoji's bookmarkedUsers. Both will be ran in service
+    }
+
+    public void removeBookmark(Eatmoji removeBookmark) {
+        bookmarks.remove(removeBookmark);
+        //Then remove user from Eatmoji's bookmarkedUsers. Both will be ran in service
     }
 
     public Long getId() {
@@ -149,6 +173,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCity() {
@@ -259,6 +291,7 @@ public class User {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
                 ", city='" + city + '\'' +
                 ", zip='" + zip + '\'' +
                 ", createdOn=" + createdOn +

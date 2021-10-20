@@ -67,6 +67,19 @@ public class Eatmoji {
         this.dishes = dishes;
     }
 
+    public void addBookmarkedUser(User user) {
+        bookmarkedUsers.add(user);
+        // Dont forget to run User updates before saving
+
+    }
+
+    public void removeBookmarkedUser(User user) {
+        bookmarkedUsers.remove(user);
+        // Dont forget to run User updates before saving
+    }
+
+    // Add function to remove or add dishes in both models
+
     public Long getId() {
         return id;
     }

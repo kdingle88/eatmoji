@@ -9,6 +9,7 @@ public class UserDTO {
     private Long id;
     private String username;
     private String email;
+    private String name;
     private String city;
     private String zip;
     private Date createdOn;
@@ -18,60 +19,26 @@ public class UserDTO {
     private List<Long> dishes = new ArrayList<>();
     private List<Long> emojiRatings = new ArrayList<>();
     private Set<Long> bookmarks = new HashSet<>();
-    private Set<Long> followers = new HashSet<>();
-    private Set<Long> following = new HashSet<>();
+    private Set<String> followers = new HashSet<>();
+    private Set<String> following = new HashSet<>();
 
     public UserDTO(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
+        this.name = user.getName();
         this.city = user.getCity();
         this.zip = user.getZip();
         this.createdOn = user.getCreatedOn();
         this.modifiedOn = user.getModifiedOn();
+        user.getRoles().forEach(role -> this.roles.add(role.getName().name()));
+        user.getEatmojis().forEach(eatmoji -> this.eatmojis.add(eatmoji.getId()));
+        user.getDishes().forEach(dish -> this.dishes.add(dish.getId()));
+        user.getEmojiRatings().forEach(rating -> this.emojiRatings.add(rating.getId()));
+        user.getBookmarks().forEach(bookmark -> this.bookmarks.add(bookmark.getId()));
+        user.getFollowers().forEach(follower -> this.followers.add(follower.getUsername()));
+        user.getFollowing().forEach(follow -> this.following.add(follow.getUsername()));
 
-        Set<String> roles = new HashSet<>();
-        user.getRoles().forEach(role -> roles.add(role.getName().name()));
-
-        this.setRoles(roles);
-
-        List<Long> eatmojis = new ArrayList<>();
-        user.getEatmojis().forEach(eatmoji -> eatmojis.add(eatmoji.getId()));
-
-        this.setEatmojis(eatmojis);
-
-        List<Long> dishes = new ArrayList<>();
-        user.getDishes().forEach(dish -> dishes.add(dish.getId()));
-
-        this.setDishes(dishes);
-
-        List<Long> emojiRating = new ArrayList<>();
-        user.getEmojiRatings().forEach(rating -> emojiRating.add(rating.getId()));
-
-        this.setEmojiRatings(emojiRatings);
-
-        Set<Long> bookmarks = new HashSet<>();
-        user.getBookmarks().forEach(bookmark -> bookmarks.add(bookmark.getId()));
-
-        this.setBookmarks(bookmarks);
-
-        Set<Long> followers = new HashSet<>();
-        user.getFollowers().forEach(follower -> followers.add(follower.getId()));
-
-        this.setFollowers(followers);
-
-        Set<Long> following = new HashSet<>();
-        user.getFollowing().forEach(follow -> following.add(follow.getId()));
-
-        this.setFollowing(following);
-
-    }
-
-    public User toEntity() {
-        User user = new User();
-        // logic adding all fields
-
-        return user;
     }
 
     public Long getId() {
@@ -96,6 +63,14 @@ public class UserDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCity() {
@@ -170,19 +145,19 @@ public class UserDTO {
         this.bookmarks = bookmarks;
     }
 
-    public Set<Long> getFollowers() {
+    public Set<String> getFollowers() {
         return followers;
     }
 
-    public void setFollowers(Set<Long> followers) {
+    public void setFollowers(Set<String> followers) {
         this.followers = followers;
     }
 
-    public Set<Long> getFollowing() {
+    public Set<String> getFollowing() {
         return following;
     }
 
-    public void setFollowing(Set<Long> following) {
+    public void setFollowing(Set<String> following) {
         this.following = following;
     }
 
@@ -205,6 +180,7 @@ public class UserDTO {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
                 ", city='" + city + '\'' +
                 ", zip='" + zip + '\'' +
                 ", createdOn=" + createdOn +
