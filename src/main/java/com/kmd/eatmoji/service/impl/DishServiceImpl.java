@@ -1,11 +1,13 @@
 package com.kmd.eatmoji.service.impl;
 
 import com.kmd.eatmoji.dto.DishDTO;
-import com.kmd.eatmoji.dto.EatmojiDTO;
+import com.kmd.eatmoji.dto.DishRatingDTO;
 import com.kmd.eatmoji.exception.ResourceNotFoundException;
 import com.kmd.eatmoji.models.Dish;
+import com.kmd.eatmoji.models.EmojiRating;
 import com.kmd.eatmoji.models.User;
 import com.kmd.eatmoji.repository.DishRepository;
+import com.kmd.eatmoji.repository.EmojiRatingRepository;
 import com.kmd.eatmoji.repository.UserRepository;
 import com.kmd.eatmoji.service.DishService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +21,13 @@ public class DishServiceImpl implements DishService {
 
     private final DishRepository dishRepository;
     private final UserRepository userRepository;
+    private final EmojiRatingRepository emojiRatingRepository;
 
     @Autowired
-    public DishServiceImpl(DishRepository dishRepository, UserRepository userRepository) {
+    public DishServiceImpl(DishRepository dishRepository, UserRepository userRepository, EmojiRatingRepository emojiRatingRepository) {
         this.dishRepository = dishRepository;
         this.userRepository = userRepository;
+        this.emojiRatingRepository = emojiRatingRepository;
     }
 
     @Override
@@ -61,6 +65,40 @@ public class DishServiceImpl implements DishService {
         dishRepository.save(dish);
 
         return new DishDTO(dish);
+
+    }
+
+    @Override
+    public List<DishDTO> findAllDishes() {
+        return this.dishRepository
+                .findAll()
+                .stream()
+                .map(dish -> new DishDTO(dish))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public DishDTO addRatings(DishRatingDTO dishRatingDTO) {
+        Dish dish = dishRepository.findById(dishRatingDTO.getDishId())
+                .orElseThrow(() -> new ResourceNotFoundException(dishRatingDTO.getDishId()));
+
+        dishRatingDTO.getEmojiRatings().forEach(emoji -> {
+            EmojiRating emojiRating = new EmojiRating();
+
+            emojiRating.setColons(emoji);
+            emojiRatingRepository.save(emojiRating);
+        });
+
+        dishRatingDTO.getEmojiRatings().forEach(emoji -> {
+            EmojiRating savedEmojiRating = emojiRatingRepository.getEmojiRatingByColons(emoji);
+
+            dish.getRatings().add(savedEmojiRating);
+        });
+
+        Dish updatedDish = dishRepository.save(dish);
+
+        return new DishDTO(updatedDish);
+
 
     }
 }

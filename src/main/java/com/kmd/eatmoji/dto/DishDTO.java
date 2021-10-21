@@ -35,7 +35,7 @@ public class DishDTO {
         this.image_url = dish.getImageUrl();
         this.created_on = dish.getCreatedOn();
         this.modified_on = dish.getModifiedOn();
-        //refactor to != null instead of else
+
         if(dish.getEatmojis() == null) {
             dish.setEatmojis(new HashSet<>());
         } else {

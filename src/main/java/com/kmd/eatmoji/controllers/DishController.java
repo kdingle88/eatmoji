@@ -1,6 +1,9 @@
 package com.kmd.eatmoji.controllers;
 
 import com.kmd.eatmoji.dto.DishDTO;
+import com.kmd.eatmoji.dto.DishRatingDTO;
+import com.kmd.eatmoji.dto.FollowDTO;
+import com.kmd.eatmoji.dto.FollowingDTO;
 import com.kmd.eatmoji.models.Dish;
 import com.kmd.eatmoji.service.DishService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +24,11 @@ public class DishController {
         this.dishService = dishService;
     }
 
-    @PostMapping()
-    public DishDTO createDish(@RequestBody DishDTO dishDTO) {
+    @GetMapping()
+    public List<DishDTO> findAllDishes() {
 
-        return this.dishService.createDish(dishDTO);
+
+        return this.dishService.findAllDishes();
     }
 
     @GetMapping("{id}")
@@ -33,6 +37,22 @@ public class DishController {
 
         return this.dishService.findById(id);
     }
+
+
+
+    @PostMapping()
+    public DishDTO createDish(@RequestBody DishDTO dishDTO) {
+
+        return this.dishService.createDish(dishDTO);
+    }
+
+    @PutMapping("addratings")
+    public DishDTO addRatings(@RequestBody DishRatingDTO dishRatingDTO ) {
+
+        return this.dishService.addRatings(dishRatingDTO);
+    }
+
+
 
 
 }

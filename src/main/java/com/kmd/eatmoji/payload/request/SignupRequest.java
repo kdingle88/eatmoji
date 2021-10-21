@@ -6,7 +6,7 @@ import javax.validation.constraints.*;
 
 public class SignupRequest {
     @NotBlank
-    @Size(min = 3, max = 20)
+    @Size(min = 5, max = 15, message = "Username must be between 5 and 15 characters.")
     private String username;
 
     @NotBlank
@@ -17,7 +17,7 @@ public class SignupRequest {
     private Set<String> role;
 
     @NotBlank
-    @Size(min = 6, max = 40)
+    @Size(min = 6, max = 50, message = "Password must be between 6 and 50 characters.")
     private String password;
 
     public String getUsername() {

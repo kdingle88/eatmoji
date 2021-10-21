@@ -24,18 +24,16 @@ public class User {
     private Long id;
 
     @NotBlank
-    @Size(max = 20)
+    @Size(min =5, max = 15, message = "Username must be between 5 and 15 characters.")
     private String username;
 
 
     @NotBlank
-    @Size(max = 50)
     @Email
     private String email;
 
     @JsonIgnore
     @NotBlank
-    @Size(max = 120)
     private String password;
 
 

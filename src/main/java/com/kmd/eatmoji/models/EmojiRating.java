@@ -19,12 +19,12 @@ public class EmojiRating {
     public Long id;
 
 
-    @NotBlank
-    @Column(name = "name", nullable = false)
+//    @NotBlank
+    @Column(name = "name")
     private String name;
 
-    @NotBlank
-    @Column(name = "type", nullable = false, updatable = false)
+//    @NotBlank
+    @Column(name = "type")
     private String type;
 
     @NotBlank

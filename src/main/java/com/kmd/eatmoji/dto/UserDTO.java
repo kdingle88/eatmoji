@@ -3,11 +3,18 @@ package com.kmd.eatmoji.dto;
 import com.google.common.base.Objects;
 import com.kmd.eatmoji.models.User;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.*;
 
 public class UserDTO {
     private Long id;
+    @NotBlank
+    @Size(min = 5, max = 15, message = "Username must be between 5 and 15 characters.")
     private String username;
+
+    @Email
     private String email;
     private String name;
     private String city;

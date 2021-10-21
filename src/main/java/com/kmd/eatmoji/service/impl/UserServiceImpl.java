@@ -7,9 +7,10 @@ import com.kmd.eatmoji.models.User;
 import com.kmd.eatmoji.repository.EatmojiRepository;
 import com.kmd.eatmoji.repository.UserRepository;
 import com.kmd.eatmoji.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,18 +18,18 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
+
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
     private final UserRepository userRepository;
     private final EatmojiRepository eatmojiRepository;
+
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, EatmojiRepository eatmojiRepository) {
         this.userRepository = userRepository;
         this.eatmojiRepository = eatmojiRepository;
     }
-    //    @Override
-//    public UserDTO findById(Long id) {
-//        return null;
-//    }
 
     @Override
     public UserDTO findByUsername(String username) {
@@ -68,9 +69,7 @@ public class UserServiceImpl implements UserService {
                 .map(bookmark -> new EatmojiDTO(bookmark))
                 .collect(Collectors.toList());
 
-
     }
-
 
     public List<FollowingDTO> changeFollowing(FollowDTO followDTO) {
         String currentUserName = followDTO.getCurrentUser();
@@ -82,9 +81,8 @@ public class UserServiceImpl implements UserService {
         User userToFollow = userRepository.findByUsername(userToFollowName)
                 .orElseThrow(() -> new ResourceNotFoundException(userToFollowName));
 
-        System.out.println(currentUserName);
-        System.out.println(userToFollowName);
-        System.out.println(currentUser.getFollowing().contains(userToFollow));
+
+        LOGGER.info(String.format("It is [%b] that [%s] is following [%s].", currentUser.getFollowing().contains(userToFollow), userToFollowName, currentUserName));
 
         if (currentUser.getFollowing().contains(userToFollow)) {
 
@@ -92,7 +90,7 @@ public class UserServiceImpl implements UserService {
         } else {
             currentUser.addFollowing(userToFollow);
         }
-        User updatedUserToFollow = userRepository.save(userToFollow);
+        userRepository.save(userToFollow);
         User updatedCurrentUser = userRepository.save(currentUser);
 
 
@@ -123,7 +121,7 @@ public class UserServiceImpl implements UserService {
             bookmarkedEatmoji.addBookmarkedUser(currentUser);
         }
         User updatedCurrentUser = userRepository.save(currentUser);
-        Eatmoji updatedEatmoji = eatmojiRepository.save(bookmarkedEatmoji);
+        eatmojiRepository.save(bookmarkedEatmoji);
 
 
         return updatedCurrentUser.getBookmarks()
@@ -131,7 +129,6 @@ public class UserServiceImpl implements UserService {
                 .map(bookmark -> new EatmojiDTO(bookmark))
                 .collect(Collectors.toList());
     }
-
 
     @Override
     public List<UserDTO> findAll() {
